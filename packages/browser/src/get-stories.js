@@ -39,12 +39,11 @@ const getStories = async (window) => {
     window.__STORYBOOK_PREVIEW__.extract &&
     window.__STORYBOOK_PREVIEW__.ready
   ) {
-    await window.__STORYBOOK_PREVIEW__.extract();
+    await window.__STORYBOOK_PREVIEW__.ready();
 
-    // Deprecated, will be removed in V9
-    const stories = window.__STORYBOOK_PREVIEW__.storyStore.raw();
+    const stories = await window.__STORYBOOK_PREVIEW__.extract();
 
-    return stories
+    return Object.values(stories)
       .map((component) => ({
         id: component.id,
         kind: component.kind,
