@@ -4,8 +4,7 @@ const getStories = async (window) => {
   const getStorybook =
     (window.__STORYBOOK_CLIENT_API__ && window.__STORYBOOK_CLIENT_API__.raw) ||
     (window.__STORYBOOK_PREVIEW__ &&
-      window.__STORYBOOK_PREVIEW__.extract &&
-      window.__STORYBOOK_PREVIEW__.storyStore.raw) ||
+      window.__STORYBOOK_PREVIEW__.extract && window.__STORYBOOK_PREVIEW__.ready) ||
     (window.loki && window.loki.getStorybook);
   if (!getStorybook) {
     throw new Error(
@@ -32,13 +31,10 @@ const getStories = async (window) => {
   };
 
   if (window.__STORYBOOK_PREVIEW__ && window.__STORYBOOK_PREVIEW__.extract) {
-    // New official API to extract stories from preview
-    await window.__STORYBOOK_PREVIEW__.extract();
+    await window.__STORYBOOK_PREVIEW__.ready();
+    const stories = await window.__STORYBOOK_PREVIEW__.extract();
 
-    // Deprecated, will be removed in V9
-    const stories = window.__STORYBOOK_PREVIEW__.storyStore.raw();
-
-    return stories
+    return Object.values(stories)
       .map((component) => ({
         id: component.id,
         kind: component.kind,
